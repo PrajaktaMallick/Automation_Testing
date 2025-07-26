@@ -1,0 +1,46 @@
+{
+  "name": "automated-web-testing",
+  "version": "1.0.0",
+  "description": "Automated web application testing using natural language instructions",
+  "main": "server/index.js",
+  "scripts": {
+    "dev": "concurrently \"npm run server:dev\" \"npm run client:dev\"",
+    "server:dev": "nodemon server/index.js",
+    "client:dev": "cd client && npm start",
+    "server:start": "node server/index.js",
+    "client:build": "cd client && npm run build",
+    "install:all": "npm install && cd client && npm install",
+    "test": "jest",
+    "test:watch": "jest --watch"
+  },
+  "keywords": [
+    "automation",
+    "testing",
+    "playwright",
+    "nlp",
+    "web-testing"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "playwright": "^1.40.0",
+    "openai": "^4.20.1",
+    "multer": "^1.4.5-lts.1",
+    "sqlite3": "^5.1.6",
+    "uuid": "^9.0.1",
+    "helmet": "^7.1.0",
+    "express-rate-limit": "^7.1.5",
+    "joi": "^17.11.0",
+    "winston": "^3.11.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2",
+    "concurrently": "^8.2.2",
+    "jest": "^29.7.0",
+    "supertest": "^6.3.3",
+    "@types/jest": "^29.5.8"
+  }
+}

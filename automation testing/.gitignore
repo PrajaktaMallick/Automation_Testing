@@ -1,0 +1,44 @@
+# Dependencies
+node_modules/
+client/node_modules/
+
+# Environment variables
+.env
+
+# Logs
+logs/
+*.log
+
+# Database
+data/
+*.db
+*.sqlite
+
+# Screenshots and test artifacts
+screenshots/
+test-results/
+test-artifacts/
+
+# Build outputs
+client/build/
+client/dist/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+tmp/
+temp/
+
+# Coverage reports
+coverage/
+
+# Playwright
+test-results/
+playwright-report/
+playwright/.cache/

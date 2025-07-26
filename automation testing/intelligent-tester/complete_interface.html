@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intelligent Automation Tester - Complete System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(102, 126, 234, 0.4);
+        }
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .spinner {
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #667eea;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .progress-bar {
+            width: 100%;
+            background-color: #e5e7eb;
+            border-radius: 9999px;
+            height: 8px;
+        }
+        .progress-fill {
+            height: 8px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 9999px;
+            transition: width 0.3s ease;
+        }
+        .action-item {
+            transition: all 0.3s ease;
+        }
+        .action-item.executing {
+            background: linear-gradient(135deg, #dbeafe 0%, #e0e7ff 100%);
+            border-left: 4px solid #3b82f6;
+        }
+        .action-item.completed {
+            background: linear-gradient(135deg, #dcfce7 0%, #f0fdf4 100%);
+            border-left: 4px solid #10b981;
+        }
+        .action-item.failed {
+            background: linear-gradient(135deg, #fee2e2 0%, #fef2f2 100%);
+            border-left: 4px solid #ef4444;
+        }
+        .pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: .5; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <header class="gradient-bg text-white p-6">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <div class="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center">
+                        🤖
+                    </div>
+                    <div>
+                        <h1 class="text-3xl font-bold">Intelligent Automation Tester</h1>
+                        <p class="text-blue-100">Complete AI-Powered Web Testing System</p>
+                    </div>
+                </div>
+                <div id="connectionStatus" class="flex items-center space-x-3">
+                    <div class="w-3 h-3 bg-yellow-400 rounded-full animate-pulse"></div>
+                    <span class="text-sm font-medium">Connecting...</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto p-6">
+        <!-- Welcome Section -->
+        <div class="card mb-8 text-center">
+            <div class="mb-6">
+                <div class="text-7xl mb-4">🚀</div>
+                <h2 class="text-4xl font-bold text-gray-900 mb-3">Complete Automation Testing System</h2>
+                <p class="text-gray-600 max-w-3xl mx-auto text-lg">
+                    Transform natural language into intelligent browser automation. Watch as AI converts your 
+                    plain English commands into sophisticated test sequences with real-time execution monitoring.
+                </p>
+            </div>
+            
+            <!-- Feature Highlights -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mt-8">
+                <div class="bg-blue-50 p-4 rounded-lg">
+                    <div class="text-2xl mb-2">🧠</div>
+                    <div class="font-semibold text-blue-900">AI Planning</div>
+                    <div class="text-sm text-blue-700">Intelligent action generation</div>
+                </div>
+                <div class="bg-green-50 p-4 rounded-lg">
+                    <div class="text-2xl mb-2">⚡</div>
+                    <div class="font-semibold text-green-900">Real-time Execution</div>
+                    <div class="text-sm text-green-700">Live progress monitoring</div>
+                </div>
+                <div class="bg-purple-50 p-4 rounded-lg">
+                    <div class="text-2xl mb-2">📸</div>
+                    <div class="font-semibold text-purple-900">Visual Capture</div>
+                    <div class="text-sm text-purple-700">Screenshot documentation</div>
+                </div>
+                <div class="bg-orange-50 p-4 rounded-lg">
+                    <div class="text-2xl mb-2">🎯</div>
+                    <div class="font-semibold text-orange-900">Smart Detection</div>
+                    <div class="text-sm text-orange-700">Advanced element finding</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Test Creator -->
+            <div class="lg:col-span-2">
+                <div class="card">
+                    <h3 class="text-2xl font-semibold text-gray-900 mb-6 flex items-center">
+                        🌐 Create Intelligent Test
+                    </h3>
+                    
+                    <form id="testForm" class="space-y-6">
+                        <!-- Website URL -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Target Website URL *
+                            </label>
+                            <input 
+                                type="url" 
+                                id="websiteUrl"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-lg"
+                                placeholder="https://example.com"
+                                value="https://example.com"
+                                required
+                            >
+                            <p class="text-sm text-gray-500 mt-2">
+                                🌐 The system will navigate to this website and perform your requested actions
+                            </p>
+                        </div>
+
+                        <!-- Test Prompt -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Describe Your Test in Natural Language *
+                            </label>
+                            <textarea 
+                                id="testPrompt"
+                                rows="5"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-lg"
+                                placeholder="Navigate to the website, take a screenshot, and verify the page title contains 'Example'"
+                                required
+                            >Navigate to the website, take a screenshot, and verify the page title contains "Example"</textarea>
+                            <p class="text-sm text-gray-500 mt-2">
+                                🧠 AI will analyze your prompt and create a detailed action plan
+                            </p>
+                        </div>
+
+                        <!-- Advanced Options -->
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <h4 class="font-medium text-gray-900 mb-3">⚙️ Advanced Options</h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="flex items-center">
+                                        <input type="checkbox" id="headlessMode" class="mr-2">
+                                        <span class="text-sm">Headless Mode</span>
+                                    </label>
+                                </div>
+                                <div>
+                                    <label class="flex items-center">
+                                        <input type="checkbox" id="screenshotMode" class="mr-2" checked>
+                                        <span class="text-sm">Capture Screenshots</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="text-center">
+                            <button type="submit" id="submitBtn" class="btn-primary flex items-center space-x-3 mx-auto text-lg px-8 py-4">
+                                <span id="submitText">🚀 Execute Intelligent Test</span>
+                                <div id="submitSpinner" class="spinner hidden"></div>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Action Plan Display -->
+                <div id="actionPlanSection" class="card mt-8 hidden">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-6">📋 Generated Action Plan</h3>
+                    <div id="actionPlanContent"></div>
+                </div>
+
+                <!-- Execution Status -->
+                <div id="executionSection" class="card mt-8 hidden">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-6">⚡ Live Execution</h3>
+                    <div id="executionContent"></div>
+                </div>
+
+                <!-- Results Section -->
+                <div id="resultsSection" class="card mt-8 hidden">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-6">📊 Test Results</h3>
+                    <div id="resultsContent"></div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="space-y-6">
+                <!-- Quick Examples -->
+                <div class="card">
+                    <h4 class="text-lg font-semibold text-gray-900 mb-4">⚡ Quick Test Examples</h4>
+                    <div class="space-y-3">
+                        <button class="example-btn w-full text-left p-4 text-sm bg-gradient-to-r from-blue-50 to-blue-100 hover:from-blue-100 hover:to-blue-200 rounded-lg border border-blue-200 transition-all"
+                                data-url="https://example.com"
+                                data-prompt="Navigate to the website, take a screenshot, and verify the page title contains 'Example'">
+                            <div class="font-medium text-blue-900">🌐 Simple Navigation</div>
+                            <div class="text-blue-700 text-xs mt-1">Basic website visit and verification</div>
+                        </button>
+                        
+                        <button class="example-btn w-full text-left p-4 text-sm bg-gradient-to-r from-green-50 to-green-100 hover:from-green-100 hover:to-green-200 rounded-lg border border-green-200 transition-all"
+                                data-url="https://httpbin.org/forms/post"
+                                data-prompt="Fill out the form with name 'John Doe' and email 'john@example.com' then submit">
+                            <div class="font-medium text-green-900">📝 Form Testing</div>
+                            <div class="text-green-700 text-xs mt-1">Automated form filling and submission</div>
+                        </button>
+                        
+                        <button class="example-btn w-full text-left p-4 text-sm bg-gradient-to-r from-purple-50 to-purple-100 hover:from-purple-100 hover:to-purple-200 rounded-lg border border-purple-200 transition-all"
+                                data-url="https://github.com"
+                                data-prompt="Search for 'playwright' and click on the first repository result">
+                            <div class="font-medium text-purple-900">🔍 Search Testing</div>
+                            <div class="text-purple-700 text-xs mt-1">Search functionality and result interaction</div>
+                        </button>
+                        
+                        <button class="example-btn w-full text-left p-4 text-sm bg-gradient-to-r from-orange-50 to-orange-100 hover:from-orange-100 hover:to-orange-200 rounded-lg border border-orange-200 transition-all"
+                                data-url="https://www.flipkart.com"
+                                data-prompt="Login with jyoti@test.com / 123456, search for headphones, and add first result to cart">
+                            <div class="font-medium text-orange-900">🛒 E-commerce Flow</div>
+                            <div class="text-orange-700 text-xs mt-1">Complete shopping workflow automation</div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- System Status -->
+                <div class="card">
+                    <h4 class="text-lg font-semibold text-gray-900 mb-4">🔧 System Status</h4>
+                    <div id="systemStatus" class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">Backend API</span>
+                            <div class="flex items-center space-x-2">
+                                <div class="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
+                                <span class="text-sm text-yellow-600 font-medium">Checking...</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">AI Engine</span>
+                            <div class="flex items-center space-x-2">
+                                <div class="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
+                                <span class="text-sm text-yellow-600 font-medium">Checking...</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">Browser Engine</span>
+                            <div class="flex items-center space-x-2">
+                                <div class="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
+                                <span class="text-sm text-yellow-600 font-medium">Checking...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Features -->
+                <div class="card bg-gradient-to-r from-indigo-50 to-purple-50 border-indigo-200">
+                    <h4 class="text-lg font-semibold text-indigo-900 mb-4 flex items-center">
+                        ✨ AI-Powered Features
+                    </h4>
+                    <div class="space-y-3 text-sm text-indigo-700">
+                        <div class="flex items-center space-x-2">
+                            <div class="w-2 h-2 bg-indigo-500 rounded-full"></div>
+                            <span>Natural Language Processing</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <div class="w-2 h-2 bg-indigo-500 rounded-full"></div>
+                            <span>Intelligent Element Detection</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <div class="w-2 h-2 bg-indigo-500 rounded-full"></div>
+                            <span>Context-Aware Action Planning</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <div class="w-2 h-2 bg-indigo-500 rounded-full"></div>
+                            <span>Real-time Execution Monitoring</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <div class="w-2 h-2 bg-indigo-500 rounded-full"></div>
+                            <span>Automatic Error Recovery</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <div class="w-2 h-2 bg-indigo-500 rounded-full"></div>
+                            <span>Visual Documentation</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Statistics -->
+                <div class="card">
+                    <h4 class="text-lg font-semibold text-gray-900 mb-4">📈 Session Statistics</h4>
+                    <div class="space-y-3">
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-600">Tests Created</span>
+                            <span id="testsCreated" class="text-sm font-medium">0</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-600">Tests Executed</span>
+                            <span id="testsExecuted" class="text-sm font-medium">0</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-600">Success Rate</span>
+                            <span id="successRate" class="text-sm font-medium">-</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let currentSessionId = null;
+        let executionInterval = null;
+        let sessionStats = { created: 0, executed: 0, successful: 0 };
+
+        // Check backend connection
+        async function checkBackendConnection() {
+            try {
+                const response = await fetch('http://localhost:8000/health');
+                const data = await response.json();
+                
+                document.getElementById('connectionStatus').innerHTML = `
+                    <div class="w-3 h-3 bg-green-400 rounded-full"></div>
+                    <span class="text-sm font-medium">Connected</span>
+                `;
+                
+                updateSystemStatus(true, data);
+                return true;
+            } catch (error) {
+                document.getElementById('connectionStatus').innerHTML = `
+                    <div class="w-3 h-3 bg-red-400 rounded-full"></div>
+                    <span class="text-sm font-medium">Disconnected</span>
+                `;
+                
+                updateSystemStatus(false);
+                return false;
+            }
+        }
+
+        function updateSystemStatus(connected, data = null) {
+            const statusHtml = connected ? `
+                <div class="flex items-center justify-between">
+                    <span class="text-sm text-gray-600">Backend API</span>
+                    <div class="flex items-center space-x-2">
+                        <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                        <span class="text-sm text-green-600 font-medium">Online</span>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-sm text-gray-600">AI Engine</span>
+                    <div class="flex items-center space-x-2">
+                        <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                        <span class="text-sm text-green-600 font-medium">Ready</span>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-sm text-gray-600">Browser Engine</span>
+                    <div class="flex items-center space-x-2">
+                        <div class="w-2 h-2 bg-${data?.playwright_available ? 'green' : 'yellow'}-500 rounded-full"></div>
+                        <span class="text-sm text-${data?.playwright_available ? 'green' : 'yellow'}-600 font-medium">
+                            ${data?.playwright_available ? 'Ready' : 'Simulation'}
+                        </span>
+                    </div>
+                </div>
+            ` : `
+                <div class="text-center py-4">
+                    <div class="text-red-600 mb-2">⚠️ Backend Not Running</div>
+                    <div class="text-sm text-gray-600">
+                        Start the backend with:<br>
+                        <code class="bg-gray-100 px-2 py-1 rounded text-xs">python working_backend.py</code>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('systemStatus').innerHTML = statusHtml;
+        }
+
+        function updateSessionStats() {
+            document.getElementById('testsCreated').textContent = sessionStats.created;
+            document.getElementById('testsExecuted').textContent = sessionStats.executed;
+            const rate = sessionStats.executed > 0 ? Math.round((sessionStats.successful / sessionStats.executed) * 100) : 0;
+            document.getElementById('successRate').textContent = sessionStats.executed > 0 ? `${rate}%` : '-';
+        }
+
+        // Example button functionality
+        document.querySelectorAll('.example-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                document.getElementById('websiteUrl').value = button.dataset.url;
+                document.getElementById('testPrompt').value = button.dataset.prompt;
+                
+                // Add visual feedback
+                button.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    button.style.transform = 'scale(1)';
+                }, 150);
+            });
+        });
+
+        // Form submission
+        document.getElementById('testForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const websiteUrl = document.getElementById('websiteUrl').value;
+            const testPrompt = document.getElementById('testPrompt').value;
+            
+            if (!websiteUrl || !testPrompt) {
+                alert('Please fill in all required fields');
+                return;
+            }
+
+            // Check backend connection first
+            const isConnected = await checkBackendConnection();
+            if (!isConnected) {
+                alert('Backend server is not running. Please start it first.');
+                return;
+            }
+
+            await executeIntelligentTest(websiteUrl, testPrompt);
+        });
+
+        async function executeIntelligentTest(websiteUrl, testPrompt) {
+            const submitBtn = document.getElementById('submitBtn');
+            const submitText = document.getElementById('submitText');
+            const submitSpinner = document.getElementById('submitSpinner');
+            
+            try {
+                // Disable form and show loading
+                submitBtn.disabled = true;
+                submitText.textContent = '🧠 AI Analyzing Prompt...';
+                submitSpinner.classList.remove('hidden');
+                
+                // Create test
+                const createResponse = await fetch('http://localhost:8000/api/tests/create', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        website_url: websiteUrl,
+                        prompt: testPrompt
+                    })
+                });
+                
+                if (!createResponse.ok) {
+                    throw new Error(`Failed to create test: ${createResponse.statusText}`);
+                }
+                
+                const testData = await createResponse.json();
+                currentSessionId = testData.session_id;
+                sessionStats.created++;
+                updateSessionStats();
+                
+                submitText.textContent = '📋 Generating Action Plan...';
+                
+                // Show action plan
+                showActionPlan(testData.action_plan);
+                
+                await new Promise(resolve => setTimeout(resolve, 1500)); // Show plan for a moment
+                
+                submitText.textContent = '🚀 Starting Execution...';
+                
+                // Execute test
+                const executeResponse = await fetch('http://localhost:8000/api/tests/execute', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        session_id: currentSessionId
+                    })
+                });
+                
+                if (!executeResponse.ok) {
+                    throw new Error(`Failed to execute test: ${executeResponse.statusText}`);
+                }
+                
+                sessionStats.executed++;
+                updateSessionStats();
+                
+                submitText.textContent = '⚡ Executing Actions...';
+                
+                // Show execution monitoring
+                showExecutionMonitoring(testData.action_plan);
+                
+                // Start monitoring execution
+                startExecutionMonitoring();
+                
+            } catch (error) {
+                alert(`Error: ${error.message}`);
+                resetForm();
+            }
+        }
+
+        function showActionPlan(actionPlan) {
+            const actionPlanSection = document.getElementById('actionPlanSection');
+            const actionPlanContent = document.getElementById('actionPlanContent');
+            
+            actionPlanContent.innerHTML = `
+                <div class="space-y-4">
+                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-4">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="font-medium text-blue-900">🧠 AI Analysis Complete</div>
+                            <div class="text-sm text-blue-700">Confidence: ${Math.round(actionPlan.confidence * 100)}%</div>
+                        </div>
+                        <div class="text-sm text-blue-700 mb-2">
+                            ${actionPlan.actions.length} actions planned • Estimated duration: ${actionPlan.estimated_duration}s
+                        </div>
+                        <div class="text-xs text-blue-600 italic">
+                            ${actionPlan.reasoning}
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-2">
+                        ${actionPlan.actions.map((action, index) => `
+                            <div id="plan-action-${index}" class="action-item flex items-center space-x-3 p-4 bg-gray-50 rounded-lg border">
+                                <div class="w-8 h-8 bg-gray-300 text-white rounded-full flex items-center justify-center text-sm font-bold">
+                                    ${index + 1}
+                                </div>
+                                <div class="flex-1">
+                                    <div class="font-medium text-gray-900">${action.description}</div>
+                                    <div class="text-sm text-gray-600">
+                                        <span class="inline-block bg-gray-200 px-2 py-1 rounded text-xs mr-2">${action.type}</span>
+                                        ${action.target ? `Target: ${action.target}` : ''}
+                                        ${action.value ? ` | Value: "${action.value}"` : ''}
+                                    </div>
+                                </div>
+                                <div id="plan-status-${index}" class="text-gray-400">⏳</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+            
+            actionPlanSection.classList.remove('hidden');
+            actionPlanSection.classList.add('fade-in');
+            actionPlanSection.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function showExecutionMonitoring(actionPlan) {
+            const executionSection = document.getElementById('executionSection');
+            const executionContent = document.getElementById('executionContent');
+            
+            executionContent.innerHTML = `
+                <div class="space-y-4">
+                    <div class="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-lg p-4">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="font-medium text-green-900">⚡ Live Execution Started</div>
+                            <div class="text-sm text-green-700">Real-time monitoring active</div>
+                        </div>
+                        <div class="progress-bar">
+                            <div id="execution-progress" class="progress-fill" style="width: 0%"></div>
+                        </div>
+                        <div class="text-xs text-green-600 mt-2">
+                            <span id="current-action-text">Initializing...</span>
+                        </div>
+                    </div>
+                    
+                    <div id="execution-actions" class="space-y-2">
+                        ${actionPlan.actions.map((action, index) => `
+                            <div id="exec-action-${index}" class="action-item flex items-center space-x-3 p-4 bg-gray-50 rounded-lg border">
+                                <div class="w-8 h-8 bg-gray-300 text-white rounded-full flex items-center justify-center text-sm font-bold">
+                                    ${index + 1}
+                                </div>
+                                <div class="flex-1">
+                                    <div class="font-medium text-gray-900">${action.description}</div>
+                                    <div class="text-sm text-gray-600">${action.type}</div>
+                                </div>
+                                <div id="exec-status-${index}" class="text-gray-400">⏳</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+            
+            executionSection.classList.remove('hidden');
+            executionSection.classList.add('fade-in');
+            executionSection.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function startExecutionMonitoring() {
+            let actionIndex = 0;
+            const totalActions = document.querySelectorAll('[id^="exec-action-"]').length;
+            
+            executionInterval = setInterval(async () => {
+                try {
+                    const response = await fetch(`http://localhost:8000/api/tests/${currentSessionId}`);
+                    const data = await response.json();
+                    
+                    if (data.execution_status && data.execution_status.current_action !== undefined) {
+                        const currentAction = data.execution_status.current_action;
+                        const progress = data.execution_status.progress || 0;
+                        
+                        // Update progress bar
+                        document.getElementById('execution-progress').style.width = `${progress}%`;
+                        document.getElementById('current-action-text').textContent = 
+                            `Executing action ${currentAction + 1} of ${totalActions}`;
+                        
+                        // Update action statuses
+                        for (let i = 0; i < currentAction; i++) {
+                            const statusElement = document.getElementById(`exec-status-${i}`);
+                            const actionElement = document.getElementById(`exec-action-${i}`);
+                            if (statusElement && actionElement) {
+                                statusElement.innerHTML = '✅';
+                                statusElement.className = 'text-green-500';
+                                actionElement.className = 'action-item completed flex items-center space-x-3 p-4 rounded-lg border';
+                            }
+                        }
+                        
+                        // Highlight current action
+                        const currentActionElement = document.getElementById(`exec-action-${currentAction}`);
+                        const currentStatusElement = document.getElementById(`exec-status-${currentAction}`);
+                        if (currentActionElement && currentStatusElement) {
+                            currentActionElement.className = 'action-item executing flex items-center space-x-3 p-4 rounded-lg border';
+                            currentStatusElement.innerHTML = '<div class="spinner w-4 h-4"></div>';
+                            currentStatusElement.className = 'text-blue-500';
+                        }
+                    }
+                    
+                    // Check if completed
+                    if (data.session.status === 'completed' || data.session.status === 'failed') {
+                        clearInterval(executionInterval);
+                        
+                        // Update final progress
+                        document.getElementById('execution-progress').style.width = '100%';
+                        document.getElementById('current-action-text').textContent = 
+                            data.session.status === 'completed' ? 'All actions completed successfully!' : 'Execution failed';
+                        
+                        // Mark final action
+                        const lastActionIndex = totalActions - 1;
+                        const lastStatusElement = document.getElementById(`exec-status-${lastActionIndex}`);
+                        const lastActionElement = document.getElementById(`exec-action-${lastActionIndex}`);
+                        if (lastStatusElement && lastActionElement) {
+                            if (data.session.status === 'completed') {
+                                lastStatusElement.innerHTML = '✅';
+                                lastStatusElement.className = 'text-green-500';
+                                lastActionElement.className = 'action-item completed flex items-center space-x-3 p-4 rounded-lg border';
+                                sessionStats.successful++;
+                            } else {
+                                lastStatusElement.innerHTML = '❌';
+                                lastStatusElement.className = 'text-red-500';
+                                lastActionElement.className = 'action-item failed flex items-center space-x-3 p-4 rounded-lg border';
+                            }
+                        }
+                        
+                        updateSessionStats();
+                        showFinalResults(data.session);
+                    }
+                    
+                } catch (error) {
+                    console.error('Error monitoring execution:', error);
+                }
+            }, 1000);
+        }
+
+        function showFinalResults(session) {
+            const resultsSection = document.getElementById('resultsSection');
+            const resultsContent = document.getElementById('resultsContent');
+            
+            const isSuccess = session.status === 'completed';
+            
+            resultsContent.innerHTML = `
+                <div class="space-y-6">
+                    <div class="bg-${isSuccess ? 'green' : 'red'}-50 border border-${isSuccess ? 'green' : 'red'}-200 rounded-lg p-6">
+                        <div class="flex items-center space-x-3 mb-4">
+                            <div class="text-${isSuccess ? 'green' : 'red'}-600 text-3xl">
+                                ${isSuccess ? '🎉' : '❌'}
+                            </div>
+                            <div>
+                                <div class="text-${isSuccess ? 'green' : 'red'}-800 font-bold text-xl">
+                                    Test ${isSuccess ? 'Completed Successfully!' : 'Failed'}
+                                </div>
+                                <div class="text-${isSuccess ? 'green' : 'red'}-700">
+                                    ${session.successful_actions} successful actions, ${session.failed_actions} failed actions
+                                    ${session.total_duration ? ` • Duration: ${session.total_duration}s` : ''}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        ${isSuccess ? `
+                            <div class="bg-white bg-opacity-50 rounded-lg p-4">
+                                <div class="text-green-800 font-medium mb-2">✨ Test Summary</div>
+                                <div class="text-green-700 text-sm">
+                                    All planned actions were executed successfully. The intelligent automation system 
+                                    successfully interpreted your natural language prompt and converted it into precise 
+                                    browser automation steps.
+                                </div>
+                            </div>
+                        ` : `
+                            <div class="bg-white bg-opacity-50 rounded-lg p-4">
+                                <div class="text-red-800 font-medium mb-2">⚠️ Error Details</div>
+                                <div class="text-red-700 text-sm">
+                                    ${session.error_summary || 'Some actions failed during execution. Check the action log above for details.'}
+                                </div>
+                            </div>
+                        `}
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 text-center">
+                            <div class="text-2xl font-bold text-blue-900">${session.total_actions}</div>
+                            <div class="text-blue-700 text-sm">Total Actions</div>
+                        </div>
+                        <div class="bg-green-50 border border-green-200 rounded-lg p-4 text-center">
+                            <div class="text-2xl font-bold text-green-900">${session.successful_actions}</div>
+                            <div class="text-green-700 text-sm">Successful</div>
+                        </div>
+                        <div class="bg-orange-50 border border-orange-200 rounded-lg p-4 text-center">
+                            <div class="text-2xl font-bold text-orange-900">${session.total_duration || 0}s</div>
+                            <div class="text-orange-700 text-sm">Duration</div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200 rounded-lg p-6">
+                        <div class="flex items-center space-x-2 mb-3">
+                            <div class="text-2xl">🚀</div>
+                            <div class="font-bold text-indigo-900 text-lg">Intelligent Automation Complete!</div>
+                        </div>
+                        <div class="text-indigo-700 text-sm">
+                            Your natural language prompt was successfully converted into ${session.total_actions} precise browser actions 
+                            and executed ${isSuccess ? 'flawlessly' : 'with some issues'}. This demonstrates the power of 
+                            AI-driven test automation that understands human intent and translates it into technical execution.
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            resultsSection.classList.remove('hidden');
+            resultsSection.classList.add('fade-in');
+            resultsSection.scrollIntoView({ behavior: 'smooth' });
+            
+            resetForm();
+        }
+
+        function resetForm() {
+            const submitBtn = document.getElementById('submitBtn');
+            const submitText = document.getElementById('submitText');
+            const submitSpinner = document.getElementById('submitSpinner');
+            
+            submitBtn.disabled = false;
+            submitText.textContent = '🚀 Execute Intelligent Test';
+            submitSpinner.classList.add('hidden');
+            
+            if (executionInterval) {
+                clearInterval(executionInterval);
+                executionInterval = null;
+            }
+        }
+
+        // Initialize
+        checkBackendConnection();
+        updateSessionStats();
+        setInterval(checkBackendConnection, 30000); // Check every 30 seconds
+    </script>
+</body>
+</html>

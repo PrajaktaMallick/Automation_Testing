@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intelligent Web Tester - Live Demo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+        }
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .spinner {
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #667eea;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .progress-bar {
+            width: 100%;
+            background-color: #e5e7eb;
+            border-radius: 9999px;
+            height: 8px;
+        }
+        .progress-fill {
+            height: 8px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 9999px;
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <header class="gradient-bg text-white p-6">
+        <div class="max-w-6xl mx-auto">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
+                        🤖
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold">Intelligent Web Tester</h1>
+                        <p class="text-blue-100">Real Browser Automation with AI</p>
+                    </div>
+                </div>
+                <div id="connectionStatus" class="flex items-center space-x-2">
+                    <div class="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></div>
+                    <span class="text-sm">Connecting...</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-6xl mx-auto p-6">
+        <!-- Welcome Section -->
+        <div class="card mb-8 text-center">
+            <div class="mb-6">
+                <div class="text-6xl mb-4">🚀</div>
+                <h2 class="text-3xl font-bold text-gray-900 mb-2">Real Browser Automation</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">
+                    This version actually opens a browser and performs the actions you describe. 
+                    Watch as your natural language commands are executed on real websites!
+                </p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Test Creator -->
+            <div class="lg:col-span-2">
+                <div class="card">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-6 flex items-center">
+                        🌐 Create Real Test
+                    </h3>
+                    
+                    <form id="testForm" class="space-y-6">
+                        <!-- Website URL -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Target Website URL *
+                            </label>
+                            <input 
+                                type="url" 
+                                id="websiteUrl"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                placeholder="https://example.com"
+                                value="https://example.com"
+                                required
+                            >
+                            <p class="text-sm text-gray-500 mt-1">
+                                The browser will actually navigate to this website
+                            </p>
+                        </div>
+
+                        <!-- Test Prompt -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                What do you want to test? *
+                            </label>
+                            <textarea 
+                                id="testPrompt"
+                                rows="4"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                placeholder="Navigate to the website, take a screenshot, and verify the page title contains 'Example'"
+                                required
+                            >Navigate to the website, take a screenshot, and verify the page title contains "Example"</textarea>
+                            <p class="text-sm text-gray-500 mt-1">
+                                Describe exactly what you want the browser to do
+                            </p>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="text-center">
+                            <button type="submit" id="submitBtn" class="btn-primary flex items-center space-x-2 mx-auto">
+                                <span id="submitText">🚀 Execute Real Test</span>
+                                <div id="submitSpinner" class="spinner hidden"></div>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Execution Status -->
+                <div id="executionStatus" class="card mt-8 hidden">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-6">🔄 Test Execution</h3>
+                    <div id="executionContent"></div>
+                </div>
+
+                <!-- Results Section -->
+                <div id="resultsSection" class="card mt-8 hidden">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-6">📊 Test Results</h3>
+                    <div id="resultsContent"></div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="space-y-6">
+                <!-- Quick Examples -->
+                <div class="card">
+                    <h4 class="text-lg font-semibold text-gray-900 mb-4">⚡ Quick Examples</h4>
+                    <div class="space-y-3">
+                        <button class="example-btn w-full text-left p-3 text-sm bg-gray-50 hover:bg-gray-100 rounded-lg border border-gray-200 transition-colors"
+                                data-url="https://example.com"
+                                data-prompt="Navigate to the website and take a screenshot">
+                            Simple Navigation Test
+                        </button>
+                        <button class="example-btn w-full text-left p-3 text-sm bg-gray-50 hover:bg-gray-100 rounded-lg border border-gray-200 transition-colors"
+                                data-url="https://httpbin.org/forms/post"
+                                data-prompt="Fill out the form with test data and submit">
+                            Form Testing
+                        </button>
+                        <button class="example-btn w-full text-left p-3 text-sm bg-gray-50 hover:bg-gray-100 rounded-lg border border-gray-200 transition-colors"
+                                data-url="https://github.com"
+                                data-prompt="Search for 'playwright' and click on the first result">
+                            Search Testing
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Real Features -->
+                <div class="card bg-gradient-to-r from-green-50 to-blue-50 border-green-200">
+                    <h4 class="text-lg font-semibold text-green-900 mb-4 flex items-center">
+                        ✅ Real Automation Features
+                    </h4>
+                    <div class="space-y-2 text-sm text-green-700">
+                        <div>🌐 Actual browser opens</div>
+                        <div>🖱️ Real clicks and typing</div>
+                        <div>📸 Live screenshot capture</div>
+                        <div>⏱️ Real-time execution</div>
+                        <div>🔍 Smart element detection</div>
+                    </div>
+                </div>
+
+                <!-- System Status -->
+                <div class="card">
+                    <h4 class="text-lg font-semibold text-gray-900 mb-4">🔧 System Status</h4>
+                    <div id="systemStatus" class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">Backend API</span>
+                            <div class="flex items-center space-x-2">
+                                <div class="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
+                                <span class="text-sm text-yellow-600 font-medium">Checking...</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">Playwright</span>
+                            <div class="flex items-center space-x-2">
+                                <div class="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
+                                <span class="text-sm text-yellow-600 font-medium">Checking...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let currentSessionId = null;
+        let executionInterval = null;
+
+        // Check backend connection
+        async function checkBackendConnection() {
+            try {
+                const response = await fetch('http://localhost:8000/health');
+                const data = await response.json();
+                
+                document.getElementById('connectionStatus').innerHTML = `
+                    <div class="w-2 h-2 bg-green-400 rounded-full"></div>
+                    <span class="text-sm">Connected</span>
+                `;
+                
+                document.getElementById('systemStatus').innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm text-gray-600">Backend API</span>
+                        <div class="flex items-center space-x-2">
+                            <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                            <span class="text-sm text-green-600 font-medium">Online</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm text-gray-600">Playwright</span>
+                        <div class="flex items-center space-x-2">
+                            <div class="w-2 h-2 bg-${data.playwright_available ? 'green' : 'red'}-500 rounded-full"></div>
+                            <span class="text-sm text-${data.playwright_available ? 'green' : 'red'}-600 font-medium">
+                                ${data.playwright_available ? 'Ready' : 'Not Available'}
+                            </span>
+                        </div>
+                    </div>
+                `;
+                
+                return true;
+            } catch (error) {
+                document.getElementById('connectionStatus').innerHTML = `
+                    <div class="w-2 h-2 bg-red-400 rounded-full"></div>
+                    <span class="text-sm">Disconnected</span>
+                `;
+                
+                document.getElementById('systemStatus').innerHTML = `
+                    <div class="text-center py-4">
+                        <div class="text-red-600 mb-2">⚠️ Backend Not Running</div>
+                        <div class="text-sm text-gray-600">
+                            Start the backend with:<br>
+                            <code class="bg-gray-100 px-2 py-1 rounded">python real_backend.py</code>
+                        </div>
+                    </div>
+                `;
+                
+                return false;
+            }
+        }
+
+        // Example button functionality
+        document.querySelectorAll('.example-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                document.getElementById('websiteUrl').value = button.dataset.url;
+                document.getElementById('testPrompt').value = button.dataset.prompt;
+            });
+        });
+
+        // Form submission
+        document.getElementById('testForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const websiteUrl = document.getElementById('websiteUrl').value;
+            const testPrompt = document.getElementById('testPrompt').value;
+            
+            if (!websiteUrl || !testPrompt) {
+                alert('Please fill in all required fields');
+                return;
+            }
+
+            // Check backend connection first
+            const isConnected = await checkBackendConnection();
+            if (!isConnected) {
+                alert('Backend server is not running. Please start it first.');
+                return;
+            }
+
+            await executeRealTest(websiteUrl, testPrompt);
+        });
+
+        async function executeRealTest(websiteUrl, testPrompt) {
+            const submitBtn = document.getElementById('submitBtn');
+            const submitText = document.getElementById('submitText');
+            const submitSpinner = document.getElementById('submitSpinner');
+            const executionStatus = document.getElementById('executionStatus');
+            const resultsSection = document.getElementById('resultsSection');
+            
+            try {
+                // Disable form
+                submitBtn.disabled = true;
+                submitText.textContent = '🔄 Creating Test...';
+                submitSpinner.classList.remove('hidden');
+                
+                // Create test
+                const createResponse = await fetch('http://localhost:8000/api/tests/create', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        website_url: websiteUrl,
+                        prompt: testPrompt
+                    })
+                });
+                
+                if (!createResponse.ok) {
+                    throw new Error(`Failed to create test: ${createResponse.statusText}`);
+                }
+                
+                const testData = await createResponse.json();
+                currentSessionId = testData.session_id;
+                
+                submitText.textContent = '🚀 Starting Execution...';
+                
+                // Show action plan
+                showActionPlan(testData.action_plan);
+                
+                // Execute test
+                const executeResponse = await fetch('http://localhost:8000/api/tests/execute', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        session_id: currentSessionId
+                    })
+                });
+                
+                if (!executeResponse.ok) {
+                    throw new Error(`Failed to execute test: ${executeResponse.statusText}`);
+                }
+                
+                submitText.textContent = '⚡ Executing...';
+                
+                // Show execution status
+                executionStatus.classList.remove('hidden');
+                executionStatus.classList.add('fade-in');
+                
+                // Start monitoring execution
+                startExecutionMonitoring();
+                
+            } catch (error) {
+                alert(`Error: ${error.message}`);
+                resetForm();
+            }
+        }
+
+        function showActionPlan(actionPlan) {
+            const executionContent = document.getElementById('executionContent');
+            
+            executionContent.innerHTML = `
+                <div class="space-y-4">
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <div class="font-medium text-blue-900 mb-2">📋 Generated Action Plan</div>
+                        <div class="text-sm text-blue-700">
+                            ${actionPlan.actions.length} actions planned • Estimated duration: ${actionPlan.estimated_duration}s
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-2">
+                        ${actionPlan.actions.map((action, index) => `
+                            <div id="action-${index}" class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                                <div class="w-6 h-6 bg-gray-300 text-white rounded-full flex items-center justify-center text-xs font-bold">
+                                    ${index + 1}
+                                </div>
+                                <div class="flex-1">
+                                    <div class="font-medium text-gray-900">${action.description}</div>
+                                    <div class="text-sm text-gray-600">${action.type}</div>
+                                </div>
+                                <div id="action-status-${index}" class="text-gray-400">⏳</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function startExecutionMonitoring() {
+            let actionIndex = 0;
+            
+            executionInterval = setInterval(async () => {
+                try {
+                    const response = await fetch(`http://localhost:8000/api/tests/${currentSessionId}`);
+                    const data = await response.json();
+                    
+                    if (data.execution_status && data.execution_status.current_action !== undefined) {
+                        const currentAction = data.execution_status.current_action;
+                        
+                        // Update action statuses
+                        for (let i = 0; i < currentAction; i++) {
+                            const statusElement = document.getElementById(`action-status-${i}`);
+                            if (statusElement) {
+                                statusElement.innerHTML = '✅';
+                                statusElement.className = 'text-green-500';
+                            }
+                        }
+                        
+                        // Highlight current action
+                        const currentActionElement = document.getElementById(`action-${currentAction}`);
+                        if (currentActionElement) {
+                            currentActionElement.className = 'flex items-center space-x-3 p-3 bg-blue-100 border border-blue-300 rounded-lg';
+                            const statusElement = document.getElementById(`action-status-${currentAction}`);
+                            if (statusElement) {
+                                statusElement.innerHTML = '🔄';
+                                statusElement.className = 'text-blue-500';
+                            }
+                        }
+                    }
+                    
+                    // Check if completed
+                    if (data.session.status === 'completed' || data.session.status === 'failed') {
+                        clearInterval(executionInterval);
+                        showFinalResults(data.session);
+                    }
+                    
+                } catch (error) {
+                    console.error('Error monitoring execution:', error);
+                }
+            }, 1000);
+        }
+
+        function showFinalResults(session) {
+            const resultsSection = document.getElementById('resultsSection');
+            const resultsContent = document.getElementById('resultsContent');
+            
+            const isSuccess = session.status === 'completed';
+            
+            resultsContent.innerHTML = `
+                <div class="space-y-6">
+                    <div class="bg-${isSuccess ? 'green' : 'red'}-50 border border-${isSuccess ? 'green' : 'red'}-200 rounded-lg p-4">
+                        <div class="flex items-center space-x-2 mb-2">
+                            <div class="text-${isSuccess ? 'green' : 'red'}-600 text-xl">
+                                ${isSuccess ? '✅' : '❌'}
+                            </div>
+                            <span class="text-${isSuccess ? 'green' : 'red'}-800 font-medium">
+                                Test ${isSuccess ? 'Completed Successfully' : 'Failed'}
+                            </span>
+                        </div>
+                        <div class="text-${isSuccess ? 'green' : 'red'}-700 text-sm">
+                            ${session.successful_actions} successful actions, ${session.failed_actions} failed actions
+                            ${session.total_duration ? ` • Duration: ${session.total_duration}s` : ''}
+                        </div>
+                    </div>
+                    
+                    ${session.error_summary ? `
+                        <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                            <div class="font-medium text-red-900 mb-2">Error Details</div>
+                            <div class="text-sm text-red-700">${session.error_summary}</div>
+                        </div>
+                    ` : ''}
+                    
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <div class="font-medium text-blue-900 mb-2">🎉 Real Browser Automation Complete!</div>
+                        <div class="text-sm text-blue-700">
+                            The test was executed on a real browser. Screenshots and detailed logs are available.
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            resultsSection.classList.remove('hidden');
+            resultsSection.classList.add('fade-in');
+            resultsSection.scrollIntoView({ behavior: 'smooth' });
+            
+            resetForm();
+        }
+
+        function resetForm() {
+            const submitBtn = document.getElementById('submitBtn');
+            const submitText = document.getElementById('submitText');
+            const submitSpinner = document.getElementById('submitSpinner');
+            
+            submitBtn.disabled = false;
+            submitText.textContent = '🚀 Execute Real Test';
+            submitSpinner.classList.add('hidden');
+            
+            if (executionInterval) {
+                clearInterval(executionInterval);
+                executionInterval = null;
+            }
+        }
+
+        // Initialize
+        checkBackendConnection();
+        setInterval(checkBackendConnection, 30000); // Check every 30 seconds
+    </script>
+</body>
+</html>
